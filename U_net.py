@@ -10,10 +10,8 @@ from keras.models import Model
 from keras.layers import Conv2D, Conv2DTranspose, ZeroPadding2D, LeakyReLU, Activation, Concatenate, Dropout, BatchNormalization, ReLU, LeakyReLU, Input
 from tensorflow.io import read_file, decode_jpeg
 import tensorflow as tf
-import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.use('TkAgg')
 
 BW_PATH = pathlib.Path(__file__).parent / "kaggleData" / "bw"
 COLOR_PATH = pathlib.Path(__file__).parent / "kaggleData" / "color"
@@ -34,10 +32,10 @@ def load(image_file):
 
 
 def resize(image, height, width):
-    image = tf.image.resize(image, 
-                            [height, width], 
+    image = tf.image.resize(image,
+                            [height, width],
                             method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-    
+
     return image
 
 
@@ -53,11 +51,14 @@ def load_image(image_file):
 
 
 bw_dataset = tf.data.Dataset.list_files(str(BW_PATH / '*.jpg'), shuffle=False)
-bw_dataset = bw_dataset.map(load_image, num_parallel_calls=tf.data.AUTOTUNE, deterministic=True)
+bw_dataset = bw_dataset.map(
+    load_image, num_parallel_calls=tf.data.AUTOTUNE, deterministic=True)
 bw_dataset = bw_dataset.batch(BATCH_SIZE)
 
-color_dataset = tf.data.Dataset.list_files(str(COLOR_PATH / '*.jpg'), shuffle=False)
-color_dataset = color_dataset.map(load_image ,num_parallel_calls=tf.data.AUTOTUNE, deterministic=True)
+color_dataset = tf.data.Dataset.list_files(
+    str(COLOR_PATH / '*.jpg'), shuffle=False)
+color_dataset = color_dataset.map(
+    load_image, num_parallel_calls=tf.data.AUTOTUNE, deterministic=True)
 color_dataset = color_dataset.batch(BATCH_SIZE)
 
 combined_dataset = tf.data.Dataset.zip((bw_dataset, color_dataset))
@@ -147,7 +148,7 @@ def Generator():
     inputs = Input(shape=[384, 384, 3])
 
     down_stack = [
-        encoder_block(64, 4, batchnorm=False), # (batch_size, 192, 192, 64)
+        encoder_block(64, 4, batchnorm=False),  # (batch_size, 192, 192, 64)
         encoder_block(128, 4),  # (batch_size, 96, 96, 128)
         encoder_block(256, 4),  # (batch_size, 48, 48, 256)
         encoder_block(512, 4),  # (batch_size, 24, 24, 512)
@@ -195,7 +196,8 @@ def Generator():
 
 
 def generator_loss(disc_generated_output, gen_output, target):
-    gan_loss = loss_object(tf.ones_like(disc_generated_output), disc_generated_output)
+    gan_loss = loss_object(tf.ones_like(
+        disc_generated_output), disc_generated_output)
 
     # Mean absolute error
     l1_loss = tf.reduce_mean(tf.abs(target - gen_output))
@@ -208,7 +210,8 @@ def generator_loss(disc_generated_output, gen_output, target):
 def discriminator_loss(disc_real_output, disc_generated_output):
     real_loss = loss_object(tf.ones_like(disc_real_output), disc_real_output)
 
-    generated_loss = loss_object(tf.zeros_like(disc_generated_output), disc_generated_output)
+    generated_loss = loss_object(tf.zeros_like(
+        disc_generated_output), disc_generated_output)
 
     total_disc_loss = real_loss + generated_loss
 
@@ -228,8 +231,9 @@ def generate_images(model, test_input, tar):
         # Getting the pixel values in the [0, 1] range to plot.
         plt.imshow(display_list[i] * 0.5 + 0.5)
         plt.axis('off')
-    
-    plt.show()
+
+    # plt.show()
+    # plt.savefig(f"pred-{time.time()}.jpg")
 
 
 generator = Generator()
@@ -238,12 +242,13 @@ discriminator = Discriminator()
 checkpoint_dir = './training_checkpoints'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
-                                discriminator_optimizer=discriminator_optimizer,
-                                generator=generator,
-                                discriminator=discriminator)
+                                 discriminator_optimizer=discriminator_optimizer,
+                                 generator=generator,
+                                 discriminator=discriminator)
 
-log_dir="logs/"
-summary_writer = tf.summary.create_file_writer(log_dir + "fit/" + datetime.datetime.now().strftime      ("%Y%m%d-%H%M%S"))
+log_dir = "logs/"
+summary_writer = tf.summary.create_file_writer(
+    log_dir + "fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
 
 @tf.function
@@ -252,15 +257,17 @@ def train_step(input_image, target, step):
         gen_output = generator(input_image, training=True)
 
         disc_real_output = discriminator([input_image, target], training=True)
-        disc_generated_output = discriminator([input_image, gen_output], training=True)
+        disc_generated_output = discriminator(
+            [input_image, gen_output], training=True)
 
-        gen_total_loss, gen_gan_loss, gen_l1_loss = generator_loss(disc_generated_output, gen_output, target)
+        gen_total_loss, gen_gan_loss, gen_l1_loss = generator_loss(
+            disc_generated_output, gen_output, target)
         disc_loss = discriminator_loss(disc_real_output, disc_generated_output)
 
         generator_gradients = gen_tape.gradient(gen_total_loss,
                                                 generator.trainable_variables)
         discriminator_gradients = disc_tape.gradient(disc_loss,
-                                                    discriminator.trainable_variables)
+                                                     discriminator.trainable_variables)
 
         generator_optimizer.apply_gradients(zip(generator_gradients,
                                                 generator.trainable_variables))
@@ -280,23 +287,27 @@ def fit(dataset, steps):
     for step, (input_image, target) in dataset.repeat().take(steps).enumerate():
         if (step) % 1000 == 0:
             if step != 0:
-                print(f'Time taken for 1000 steps: {time.time()-start:.2f} sec\n')
+                print(
+                    f'Time taken for 1000 steps: {time.time()-start:.2f} sec\n')
 
             start = time.time()
 
-            generate_images(generator, input_image, target)
-            print(f"Step: {step//1000}k")
+            # generate_images(generator, input_image, target)
+            # print(f"Step: {step//1000}k")
 
         train_step(input_image, target, step)
 
         # Training step
-        if (step+1) % 10 == 0:
+        if (step+1) % 50 == 0:
             print('.', end='', flush=True)
-
 
         # Save (checkpoint) the model every 5k steps
         if (step + 1) % 5000 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-fit(combined_dataset, steps=2000)
+# fit(combined_dataset, steps=20001)
+checkpoint.restore("./training_checkpoints/ckpt-3")
+
+for bw, color in combined_dataset.take(10):
+    generate_images(generator, bw, color)

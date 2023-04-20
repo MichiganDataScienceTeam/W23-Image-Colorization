@@ -1,0 +1,1 @@
+Checkpoints [1-12] spaced 25K steps apart

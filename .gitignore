@@ -1,11 +1,14 @@
 # ignore data
 kaggleData/
+MIRFLICKR/
+test_images/
+80K/
 
 # ignore logs
-logs/
+*logs/
 
 # ignore checkpoints
-training_checkpoints*/
+*_checkpoints/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -249,6 +249,24 @@ def generate_images(model, test_input, tar):
     plt.savefig(f"pred-{time.time()}.jpg")
 
 
+def generate_test(model, test_input):
+    prediction = model(test_input, training=True)
+    plt.figure(figsize=(15, 15))
+
+    display_list = [test_input[0], prediction[0]]
+    title = ['Input Image', 'Predicted Image']
+
+    for i in range(2):
+        plt.subplot(1, 2, i+1)
+        plt.title(title[i])
+        # Getting the pixel values in the [0, 1] range to plot.
+        plt.imshow(display_list[i] * 0.5 + 0.5)
+        plt.axis('off')
+
+    # plt.show()
+    plt.savefig(f"pred-{time.time()}.jpg")
+
+
 generator = Generator()
 discriminator = Discriminator()
 
@@ -319,28 +337,21 @@ def fit(dataset, steps):
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-checkpoint.restore("./kaggle_checkpoints/ckpt-22")
+checkpoint.restore("./kaggle_checkpoints/ckpt-20")
 # fit(combined_dataset, steps=101)
 
 
-for i, (bw, color) in enumerate(combined_dataset.take(500)):
-    if i % 10 == 0:
-        generate_images(generator, bw, color)
+# for i, (bw, color) in enumerate(combined_dataset.take(500)):
+#     if i % 10 == 0:
+#         generate_images(generator, bw, color)
 
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 
-# for path in os.listdir(TEST_DIR_BW):
-#     if path.endswith('.jpg') or path.endswith('.jpeg'):
-#         test = load_test_image(str(TEST_DIR_BW / path))
+for path in os.listdir(TEST_DIR_BW):
+    if path.endswith('.jpg') or path.endswith('.jpeg'):
+        test = load_test_image(str(TEST_DIR_BW / path))
 
-#         test = tf.expand_dims(test, axis=0)
+        test = tf.expand_dims(test, axis=0)
 
-#         test = generator(test, training=True)[0]
-#         plt.figure()
-
-#         # Getting the pixel values in the [0, 1] range to plot.
-#         plt.imshow(test * 0.5 + 0.5)
-
-#         # plt.show()
-#         plt.savefig(f"pred-{time.time()}.jpg")
+        generate_test(generator, test)

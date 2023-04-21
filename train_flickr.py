@@ -310,27 +310,27 @@ def fit(dataset, steps):
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-checkpoint.restore("./flickr_checkpoints/ckpt-6")
+checkpoint.restore("./flickr_checkpoints/ckpt-12")
 # fit(combined_dataset, steps=101)
 
-for i, (bw, color) in enumerate(combined_dataset.take(500)):
-    if i % 10 == 0:
-        generate_images(generator, bw, color)
+# for i, (bw, color) in enumerate(combined_dataset.take(500)):
+#     if i % 10 == 1:
+#         generate_images(generator, bw, color)
 
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 
-# for path in os.listdir(TEST_DIR_BW):
-#     if path.endswith('.jpg') or path.endswith('.jpeg'):
-#         test = load_test_image(str(TEST_DIR_BW / path))
+for path in os.listdir(TEST_DIR_BW):
+    if path.endswith('.jpg') or path.endswith('.jpeg'):
+        test = load_test_image(str(TEST_DIR_BW / path))
 
-#         test = tf.expand_dims(test, axis=0)
+        test = tf.expand_dims(test, axis=0)
 
-#         test = generator(test, training=True)[0]
-#         plt.figure()
+        test = generator(test, training=True)[0]
+        plt.figure()
 
-#         # Getting the pixel values in the [0, 1] range to plot.
-#         plt.imshow(test * 0.5 + 0.5)
+        # Getting the pixel values in the [0, 1] range to plot.
+        plt.imshow(test * 0.5 + 0.5)
 
-#         # plt.show()
-#         plt.savefig(f"pred-{time.time()}.jpg")
+        # plt.show()
+        plt.savefig(f"pred-{time.time()}.jpg")

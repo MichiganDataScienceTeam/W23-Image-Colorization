@@ -55,14 +55,17 @@ def load_image(image_file):
 def load_test_image(image_file):
     target = load(image_file)
     target = resize(target, 384, 384)
-    target = normalize(target)
 
-    if target.shape[-1] == 3:
-        target = tf.image.rgb_to_grayscale(target)
-        target = tf.concat([target, target, target], axis=2)
-    elif target.shape[-1] == 1:
-        target = tf.concat([target, target, target], axis=2)
-    return target
+    bw = target
+    if bw.shape[-1] == 3:
+        bw = tf.image.rgb_to_grayscale(bw)
+
+    bw = tf.concat([bw, bw, bw], axis=2)
+
+    target = normalize(target)
+    bw = normalize(bw)
+
+    return bw, target
 
 
 combined_dataset = tf.data.Dataset.list_files(str(PATH / "*.jpg"))
@@ -230,7 +233,7 @@ def generate_images(model, test_input, tar):
     plt.figure(figsize=(15, 15))
 
     display_list = [test_input[0], tar[0], prediction[0]]
-    title = ['Input Image', 'Ground Truth', 'Predicted Image']
+    title = ['1960s', '2020s', 'Some time in between']
 
     for i in range(3):
         plt.subplot(1, 3, i+1)
@@ -241,6 +244,7 @@ def generate_images(model, test_input, tar):
 
     # plt.show()
     plt.savefig(f"pred-{time.time()}.jpg")
+    plt.close()
 
 
 generator = Generator()
@@ -313,24 +317,19 @@ def fit(dataset, steps):
 checkpoint.restore("./flickr_checkpoints/ckpt-12")
 # fit(combined_dataset, steps=101)
 
-# for i, (bw, color) in enumerate(combined_dataset.take(500)):
-#     if i % 10 == 1:
-#         generate_images(generator, bw, color)
+# for i, (bw, color) in enumerate(combined_dataset.take(50)):
+#     if i % 10 == 5:
+#         # generate_images(generator, bw, color)
 
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 
-for path in os.listdir(TEST_DIR_BW):
-    if path.endswith('.jpg') or path.endswith('.jpeg'):
-        test = load_test_image(str(TEST_DIR_BW / path))
+# for path in os.listdir():
+#     path = path.lower()
+#     if path.endswith('.jpg') or path.endswith('.jpeg'):
+#         bw, target = load_test_image(path)
 
-        test = tf.expand_dims(test, axis=0)
+#         bw = tf.expand_dims(bw, axis=0)
+#         target = tf.expand_dims(target, axis=0)
 
-        test = generator(test, training=True)[0]
-        plt.figure()
-
-        # Getting the pixel values in the [0, 1] range to plot.
-        plt.imshow(test * 0.5 + 0.5)
-
-        # plt.show()
-        plt.savefig(f"pred-{time.time()}.jpg")
+#         generate_images(generator, bw, target)

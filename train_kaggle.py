@@ -53,14 +53,17 @@ def load_image(image_file):
 def load_test_image(image_file):
     target = load(image_file)
     target = resize(target, 384, 384)
-    target = normalize(target)
 
-    if target.shape[-1] == 3:
-        target = tf.image.rgb_to_grayscale(target)
-        target = tf.concat([target, target, target], axis=2)
-    elif target.shape[-1] == 1:
-        target = tf.concat([target, target, target], axis=2)
-    return target
+    bw = target
+    if bw.shape[-1] == 3:
+        bw = tf.image.rgb_to_grayscale(bw)
+
+    bw = tf.concat([bw, bw, bw], axis=2)
+
+    target = normalize(target)
+    bw = normalize(bw)
+
+    return bw, target
 
 
 bw_dataset = tf.data.Dataset.list_files(str(BW_PATH / '*.jpg'), shuffle=False)
@@ -337,7 +340,7 @@ def fit(dataset, steps):
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-checkpoint.restore("./kaggle_checkpoints/ckpt-20")
+checkpoint.restore("./kaggle_checkpoints/ckpt-21")
 # fit(combined_dataset, steps=101)
 
 
@@ -348,10 +351,13 @@ checkpoint.restore("./kaggle_checkpoints/ckpt-20")
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 
-for path in os.listdir(TEST_DIR_BW):
-    if path.endswith('.jpg') or path.endswith('.jpeg'):
-        test = load_test_image(str(TEST_DIR_BW / path))
+# for path in os.listdir():
+#     if path.endswith('.jpg') or path.endswith('.jpeg'):
+#         bw, target = load_test_image(path)
 
-        test = tf.expand_dims(test, axis=0)
+#         bw = tf.expand_dims(bw, axis=0)
+#         target = tf.expand_dims(target, axis=0)
 
-        generate_test(generator, test)
+#         generate_images(generator, bw, target)
+
+generator.save("kaggle.h5")

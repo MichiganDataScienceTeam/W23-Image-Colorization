@@ -3,6 +3,13 @@ kaggleData/
 MIRFLICKR/
 test_images/
 80K/
+flickr.h5
+kaggle.h5
+
+# ignore pictures
+*.jpg
+*.jpeg
+*.png
 
 # ignore logs
 *logs/

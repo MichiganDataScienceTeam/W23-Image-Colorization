@@ -326,9 +326,6 @@ def fit(dataset, steps):
 
             start = time.time()
 
-            # generate_images(generator, input_image, target)
-            # print(f"Step: {step//1000}k")
-
         train_step(input_image, target, step)
 
         # Training step
@@ -340,17 +337,14 @@ def fit(dataset, steps):
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-checkpoint.restore("./kaggle_checkpoints/ckpt-21")
+# checkpoint.restore("./kaggle_checkpoints/ckpt-21")
 # fit(combined_dataset, steps=101)
 
-
-# for i, (bw, color) in enumerate(combined_dataset.take(500)):
-#     if i % 10 == 0:
-#         generate_images(generator, bw, color)
 
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 
+# Code for generating some predictions
 # for path in os.listdir():
 #     if path.endswith('.jpg') or path.endswith('.jpeg'):
 #         bw, target = load_test_image(path)
@@ -359,5 +353,3 @@ TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 #         target = tf.expand_dims(target, axis=0)
 
 #         generate_images(generator, bw, target)
-
-generator.save("kaggle.h5")

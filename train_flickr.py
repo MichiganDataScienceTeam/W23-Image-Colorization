@@ -242,9 +242,7 @@ def generate_images(model, test_input, tar):
         plt.imshow(display_list[i] * 0.5 + 0.5)
         plt.axis('off')
 
-    # plt.show()
     plt.savefig(f"pred-{time.time()}.jpg")
-    plt.close()
 
 
 generator = Generator()
@@ -305,33 +303,25 @@ def fit(dataset, steps):
 
         train_step(input_image, target, step)
 
-        # Training step
-        if (step+1) % 10 == 0:
-            print('.', end='', flush=True)
-
         # Save (checkpoint) the model every 10k steps
         if (step + 1) % 10000 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-checkpoint.restore("./flickr_checkpoints/ckpt-12")
+# checkpoint.restore("./flickr_checkpoints/ckpt-12")
 # fit(combined_dataset, steps=101)
-
-# for i, (bw, color) in enumerate(combined_dataset.take(50)):
-#     if i % 10 == 5:
-#         # generate_images(generator, bw, color)
 
 TEST_DIR_BW = pathlib.Path(__file__).parent / "test_images" / "bw"
 TEST_DIR_COLOR = pathlib.Path(__file__).parent / "test_images" / "color"
 CHERRIES = pathlib.Path(__file__).parent / "test_images" / "cherries"
 
+# code for generating some predictions
+# for path in os.listdir(CHERRIES):
+#     path = path.lower()
+#     if path.endswith('.jpg') or path.endswith('.jpeg'):
+#         bw, target = load_test_image(str(CHERRIES / path))
 
-for path in os.listdir(CHERRIES):
-    path = path.lower()
-    if path.endswith('.jpg') or path.endswith('.jpeg'):
-        bw, target = load_test_image(str(CHERRIES / path))
+#         bw = tf.expand_dims(bw, axis=0)
+#         target = tf.expand_dims(target, axis=0)
 
-        bw = tf.expand_dims(bw, axis=0)
-        target = tf.expand_dims(target, axis=0)
-
-        generate_images(generator, bw, target)
+#         generate_images(generator, bw, target)

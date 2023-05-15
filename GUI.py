@@ -13,13 +13,12 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 root = tk.Tk()
 CURRENT = pathlib.Path(__file__).parent
 
-flickr_300K = load_model("flickr.h5")
-
-flickr_300K.compile()
-
-models = {
-    "Flickr 25K Dataset GAN (300K Steps):": flickr_300K,
-}
+# Load models
+# flickr_300K = load_model("flickr.h5")
+# flickr_300K.compile()
+# models = {
+#     "Flickr 25K Dataset GAN (300K Steps):": flickr_300K,
+# }
 
 
 def load(image_file):
@@ -66,41 +65,6 @@ def load_test_image(image_file):
     bw = normalize(bw)
 
     return bw, target
-
-
-def CNN_preprocess(img):
-    try:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-
-        img = img.astype(np.float32)
-        img_lab = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)
-        # Convert the rgb values of the input image to the range of 0 to 1
-        # 1.0/255 indicates that we are using a 24-bit RGB color space.
-        # It means that we are using numbers between 0–255 for each color channel
-        # img_lab = 1.0/225*img_lab
-        # resize the lightness channel to network input size
-        # resize image to network input size
-        img_lab_rs = cv2.resize(img_lab, (224, 224))
-        img_l = img_lab_rs[:, :, 0]  # pull out L channel
-        # img_l -= 50 # subtract 50 for mean-centering
-        img_ab = img_lab_rs[:, :, 1:]  # Extracting the ab channel
-        img_ab = img_ab/128
-        # The true color values range between -128 and 128. This is the default interval
-        # in the Lab color space. By dividing them by 128, they too fall within the -1 to 1 interval.
-
-        return img_l
-    except:
-        return None
-
-
-def CNN_predict(model, image):
-    pred = model.predict(image)
-    pred = pred*128
-    pred = resize(pred, 224, 224)
-
-    return pred
 
 
 class Demo_GUI():
@@ -156,8 +120,6 @@ class Demo_GUI():
         canvas.draw()
 
     def make_predictions(self):
-        # image is loaded in as (384, 384)
-        # also need them in (224, 224)
         GAN_input = tf.expand_dims(self.input_image, axis=0)
 
         for i, model in enumerate(self.models.values()):

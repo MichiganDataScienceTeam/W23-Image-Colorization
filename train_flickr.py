@@ -233,7 +233,7 @@ def generate_images(model, test_input, tar):
     plt.figure(figsize=(15, 15))
 
     display_list = [test_input[0], prediction[0]]
-    title = ['Original', 'Upgraded']
+    title = ['Original', 'Colorized']
 
     for i in range(2):
         plt.subplot(1, 2, i+1)
@@ -242,7 +242,7 @@ def generate_images(model, test_input, tar):
         plt.imshow(display_list[i] * 0.5 + 0.5)
         plt.axis('off')
 
-    plt.savefig(f"pred-{time.time()}.jpg")
+    plt.show()
 
 
 generator = Generator()

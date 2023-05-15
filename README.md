@@ -17,6 +17,7 @@ Our project group studied using convolutional neural networks (CNNs) and generat
 └── MNIST_Tutorial
     ├── pytorch_mnist.ipynb
     └── tensorflow_mnist.ipynb
+├── gallery
 ├── README.md
 ├── flickr_checkpoints.txt
 ├── kaggle_checkpoints.txt

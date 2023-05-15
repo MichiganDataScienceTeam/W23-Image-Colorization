@@ -4,6 +4,8 @@
 
 **Winter 2023**
 
+![](gallery/lion.jpg "Lion")
+
 ## Overview
 
 Our project group studied using convolutional neural networks (CNNs) and generative adversarial networks (GANs) to turn black and white images into colored images.
@@ -47,3 +49,24 @@ Unfortunately, the trained checkpoints are too big to be uploaded to Github.
 Adam Cheng, Ammad Hassan, Anthony Hernandez, Ayush Saklani, Batu Engin, Brian Lee, Christine Geng, Elkin Bayratkar, Ella Zhang, Joonseop Kim, Josh Zhang, Joshua Rhee, Marcus Lewis, Min Kim, Minwoo Kwak, Nurin Musa, Oviyan Anbarasu, Rhea Uppal, Ruimin Gao, So Min An, Toby Buckfire, Weston Pangle, Yongha Cho, Yuqi Zhao
 
 ## Gallery
+![](gallery/cloud.jpg "cloud")
+
+![](gallery/coast.jpg "coast")
+
+![](gallery/mountain.jpg "mountain")
+
+![](gallery/landscape.jpg "landscape")
+
+![](gallery/lake.jpg "lake")
+
+![](gallery/path.jpg "path")
+
+![](gallery/tree.jpg "tree")
+
+![](gallery/golden-gate.jpg "golden-gate")
+
+![](gallery/port.jpg "port")
+
+![](gallery/skyscraper.jpg "skyscraper")
+
+![](gallery/fox.jpg "fox")
